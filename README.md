@@ -74,7 +74,7 @@ Running time is N events * M minutes per event. Room for optimization here...
 
 Next the list of events is sorted in descending order of greatest number of collisions.
 
-Finally, we determine the required values, starting we the obvious:
+Finally, we determine the required values, starting with the obvious:
 
 ```
 Element top = start minute
