@@ -56,3 +56,46 @@ Use your function from Part I to create a web page that is styled with the follo
 + An event that starts at 6:00 pm and ends at 7:00pm
 + An event that starts at 6:20pm and ends at 7:20pm
 + An event that starts at 7:10pm pm and ends at 8:10 pm
+
+## My Solution
+
+In a very short overview:
+
+First, I identify collisions:
+
+```
+For each event
+  Initialize empty list of collisons
+  For each minute the event occurs
+    Identity if other event also occurs at this time. If so, add it to the current event's collision list.
+```
+
+Running time is N events * M minutes per event. Room for optimization here...
+
+Next the list of events is sorted in descending order of greatest number of collisions.
+
+Finally, we determine the required values, starting we the obvious:
+
+```
+Element top = start minute
+```
+
+Lastly we determine true width and left:
+
+```
+For each event
+  if no collisions exist:
+    width = MAX
+    left = 0
+  else:
+    width = MAX / number of collisions
+    left = 0
+    (incrementingLeft = left)
+    For each colliding event
+      (incrementingLeft += width)
+      collider's width = width
+      collider's left = incrementingLeft
+      remove collider from sorted list
+```
+    
+In this way we ensure we are working with the event with the greatest collision count first and we can apply the same values to colliding events. After applying the values, we simply remove them from the list to ensure we only visit each event once.
