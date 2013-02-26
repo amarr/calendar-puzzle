@@ -15,26 +15,33 @@
 	 * function layOutDay(events) {...}
 	 */
 	function layOutDay(events) {
-		var minutes = [];
+		console.profile('a');
 
-		_.each(events, function(event) {
+		var touchedEvents = [];
+
+		for(var i = 0, l = events.length; i < l; i++) {
+			var event = events[i];
+
 			event.collisions = [];
 			event.top = event.start;
 			event.left = 0;
 			event.width = 600;
 
-			for(var s = event.start, e = event.end; s < e; s++) {
-				_.each(events, function(otherEvent) {
-					if(event.id == otherEvent.id || !eventOccursAtMinute(otherEvent, s)) {
-						return;
-					}
+			touchedEvents.push(event);
+		}
 
-					if(!_.contains(event.collisions, otherEvent.id)) {
-						event.collisions.push(otherEvent.id);
-					}
-				});
+		while(touchedEvents.length > 0) {
+			var event = touchedEvents.pop();
+
+			for(var j = 0; j < touchedEvents.length; j++) {
+				var otherEvent = touchedEvents[j];
+
+				if(eventsCollide(event, otherEvent)) {
+					event.collisions.push(otherEvent.id);
+					otherEvent.collisions.push(event.id);
+				}
 			}
-		});
+		}
 
 		// Events are sorted so highest collision count is first
 		var sortedEvents = _.sortBy(events, function(event) {
@@ -57,7 +64,28 @@
 			});
 		});
 
+		console.profileEnd('a');
 		return events;
+	}
+
+	/**
+	 * Checks to see if two events collide.
+	 * @param  {Event} event1
+	 * @param  {Event} event2
+	 * @return {Boolean}
+	 */
+	function eventsCollide(event1, event2) {
+		// event2 starts within event1
+		if(event1.start <= event2.start && event1.end >= event2.start) {
+			return true;
+		}
+
+		// event2 ends within event1
+		if(event1.start <= event2.end && event1.end >= event2.end) {
+			return true;
+		}
+
+		return false;
 	}
 
 	function eventOccursAtMinute(event, minute) {
