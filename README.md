@@ -66,13 +66,13 @@ First, I identify collisions:
 ```
 For each event
   Initialize empty list of collisons
-  For each minute the event occurs
-    Identity if other event also occurs at this time. If so, add it to the current event's collision list.
+  Identity if other event also occurs at this time. If so, add it to the current event's collision list and add current even to other event's collision list.
+  Remove event from list
 ```
 
-Running time is N events * M minutes per event. Room for optimization here...
+This process is improved by removing each event from the list after iteration so that each subsequent event is only checking for collisions that have not yet been found.
 
-Next the list of events is sorted in descending order of greatest number of collisions.
+Next the list of events is sorted by number of collisions.
 
 Finally, we determine the required values, starting with the obvious:
 
