@@ -66,7 +66,8 @@ First, I identify collisions:
 ```
 For each event
   Initialize empty list of collisons
-  Identity if other event also occurs at this time. If so, add it to the current event's collision list and add current even to other event's collision list.
+  Identity if other events also occurs at this time. 
+    Add other event to the current event's collision list and add current even to other event's collision list.
   Remove event from list
 ```
 
