@@ -15,10 +15,9 @@
 	 * function layOutDay(events) {...}
 	 */
 	function layOutDay(events) {
-		console.profile('a');
-
 		var touchedEvents = [];
 
+		// Touch each event for setup.
 		for(var i = 0, l = events.length; i < l; i++) {
 			var event = events[i];
 
@@ -30,6 +29,7 @@
 			touchedEvents.push(event);
 		}
 
+		// Find collisions for each event.
 		while(touchedEvents.length > 0) {
 			var event = touchedEvents.pop();
 
@@ -37,34 +37,34 @@
 				var otherEvent = touchedEvents[j];
 
 				if(eventsCollide(event, otherEvent)) {
-					event.collisions.push(otherEvent.id);
-					otherEvent.collisions.push(event.id);
+					event.collisions.push(otherEvent);
+					otherEvent.collisions.push(event);
 				}
 			}
 		}
 
-		// Events are sorted so highest collision count is first
+		// Events are sorted so highest collision count is last
 		var sortedEvents = _.sortBy(events, function(event) {
-			return event.collisions.length * -1;
+			return event.collisions.length;
 		});
 
-		_.each(sortedEvents, function(event) {
+		// Calculate width and left position for event based on collision counts.
+		while(sortedEvents.length > 0) {
+			var event = sortedEvents.pop();
+
 			event.width = 600 / (event.collisions.length + 1);
 			var otherLeft = event.width;
 
-			_.each(event.collisions, function(id) {
-				var otherEvent = getEventById(sortedEvents, id);
-
+			_.each(event.collisions, function(otherEvent) {
 				otherEvent.width = event.width;
 				otherEvent.left = otherLeft;
 
 				otherLeft += event.width;
 
-				removeEventById(sortedEvents, id);
+				removeEventById(sortedEvents, otherEvent.id);
 			});
-		});
+		}
 
-		console.profileEnd('a');
 		return events;
 	}
 
@@ -88,10 +88,6 @@
 		return false;
 	}
 
-	function eventOccursAtMinute(event, minute) {
-		return event.start <= minute && event.end >= minute;
-	}
-
 	function removeEventById(events, id) {
 		for(var i = 0, l = events.length; i < l; i++) {
 			if(events[i].id == id) {
@@ -99,14 +95,6 @@
 				break;
 			}
 		}
-	}
-
-	function getEventById(events, id) {
-		for(var i = 0, l = events.length; i < l; i++) {
-			if(events[i].id == id) {
-				return events[i];
-			}
-		}	
 	}
 
 	var hourMap = ['9:xx AM','10:xx AM','11:xx AM','12:xx PM','1:xx PM','2:xx PM','3:xx PM','4:xx PM','5:xx PM','6:xx PM','7:xx PM','8:xx PM','9:xx PM'];
